@@ -1,0 +1,39 @@
+{
+  "name": "dokploy-translator",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@10.22.0",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "wxt",
+    "build": "wxt build",
+    "zip": "wxt zip",
+    "prepare": "wxt prepare",
+    "extract": "tsx scripts/extract-dokploy-strings.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "cross-env WXT_E2E=true wxt build --mode e2e && playwright test",
+    "check:release": "node scripts/check-release.mjs"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "wxt": "^0.20.13"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "jsdom": "^25.0.1",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "cross-env": "^7.0.3",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}

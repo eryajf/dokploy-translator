@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><title>Dokploy fixture</title></head>
+  <body>
+    <main>
+      <h1>Home</h1>
+      <h2>Database Type</h2>
+      <h2>SSO Authentication</h2>
+      <h2>DNS Configuration Guide</h2>
+      <h2>Volume Backups</h2>
+      <h2>CPU Limit</h2>
+      <button id="save" title="Save">Save</button>
+      <input id="search" placeholder="Search">
+      <pre id="code">Save</pre>
+      <div aria-hidden="true">Save</div>
+      <section id="dynamic"></section>
+    </main>
+    <script>
+      setTimeout(() => {
+        const button = document.createElement('button');
+        button.textContent = 'Deployment Logs';
+        document.querySelector('#dynamic').append(button);
+        const logs = document.createElement('p');
+        logs.textContent = 'Logs for api-service';
+        document.querySelector('#dynamic').append(logs);
+      }, 150);
+    </script>
+  </body>
+</html>

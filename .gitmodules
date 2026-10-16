@@ -1,0 +1,4 @@
+[submodule "dokploy"]
+	path = dokploy
+	url = https://github.com/Dokploy/dokploy.git
+	branch = main

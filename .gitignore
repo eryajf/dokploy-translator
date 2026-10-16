@@ -1,0 +1,9 @@
+node_modules/
+.pnpm-store/
+.output/
+.wxt/
+test-results/
+playwright-report/
+src/translation/dictionary.report.json
+src/translation/dictionary.sensitive.json
+

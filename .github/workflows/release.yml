@@ -1,0 +1,39 @@
+name: Release extension
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm exec tsc --noEmit
+      - run: pnpm build
+      - run: pnpm zip
+      - run: pnpm check:release
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - name: Prepare release assets
+        run: |
+          mkdir -p release
+          cp -R .output/chrome-mv3 release/dokploy-translator-chrome-mv3
+          find .output -maxdepth 1 -type f -name '*.zip' -exec cp {} release/ \;
+          tar -czf release/dokploy-translator-${GITHUB_REF_NAME}.tar.gz -C release dokploy-translator-chrome-mv3
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: release/*
