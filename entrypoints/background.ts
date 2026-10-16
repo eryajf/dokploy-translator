@@ -6,9 +6,9 @@ import {
   originPattern,
   siteId,
   type SiteConfig,
-  type UnknownTextEntry,
 } from "../src/storage/settings";
 import { desiredScriptIds, staleScriptIds } from "../src/runtime/registry";
+import { sanitizeUnknownTextEntry } from "../src/translation/unknown-text";
 let syncPromise: Promise<void> = Promise.resolve();
 
 async function hasPermission(origin: string): Promise<boolean> {
@@ -55,7 +55,11 @@ function queueSync(): void {
   syncPromise = syncPromise.catch(() => undefined).then(() => syncRegisteredScripts());
 }
 
-async function recordUnknown(entry: UnknownTextEntry): Promise<void> {
+let recordPromise: Promise<void> = Promise.resolve();
+
+async function recordUnknown(value: unknown): Promise<void> {
+  const entry = sanitizeUnknownTextEntry(value);
+  if (!entry) return;
   const current = await settings.getValue();
   if (!current.debugUnknown) return;
   const existing = await unknownTexts.getValue();
@@ -74,7 +78,9 @@ export default defineBackground(() => {
   browser.permissions.onRemoved.addListener(() => queueSync());
   browser.runtime.onMessage.addListener((message) => {
     if (message?.type === "sync") queueSync();
-    if (message?.type === "unknownText" && message.entry) void recordUnknown(message.entry);
+    if (message?.type === "unknownText" && message.entry) {
+      recordPromise = recordPromise.catch(() => undefined).then(() => recordUnknown(message.entry));
+    }
   });
   queueSync();
 });

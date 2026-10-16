@@ -13,16 +13,80 @@
       <input id="search" placeholder="Search">
       <pre id="code">Save</pre>
       <div aria-hidden="true">Save</div>
+      <section id="account"><h3>Passkeys</h3><button title="Remove this passkey?">Unlink</button></section>
+      <p id="network">Networks updated. Redeploy the service to apply them.</p>
+      <input id="user-value" value="production-api-server" placeholder="Passkey Name">
+      <pre id="command">npm run build</pre>
+      <p id="unknown">Future Dokploy action</p>
+      <p id="memory-template">Used: 1.25GiB / Limit: 512MiB</p>
+      <p id="dns-template">Delete the HTTPS record "app.example.com"? This removes it from the DNS provider, not just from Dokploy.</p>
+      <p id="billing-feature">Unlimited apps &amp; databases</p>
+      <p id="log-line-count">2500 lines</p>
+      <div id="preview-label"><input placeholder="Enter a label (e.g. enhancements, needs-review)"><button>Add Label</button><output></output></div>
+      <div id="watch-path"><input placeholder="Enter a path to watch (e.g., src/**, dist/*.js)"><button>Add</button><output></output></div>
+      <div id="middleware"><input placeholder="e.g., rate-limit@file, auth@file"><button>Add</button><output></output></div>
+      <section id="logs" class="custom-logs-scrollbar">
+        <h3>Deployment Logs</h3><button title="Save">Save</button>
+        <span id="raw-log" class="font-mono whitespace-pre-wrap break-all" title="Save">Save<strong title="Save">Cancel</strong><em>Future private log message</em></span>
+        <span id="log-ui" class="font-mono">Save</span>
+      </section>
+      <span id="outside-log" class="font-mono whitespace-pre-wrap break-all">Save</span>
       <section id="dynamic"></section>
     </main>
     <script>
+      document.querySelector('#preview-label button').addEventListener('click', (event) => {
+        const input = event.target.parentElement.querySelector('input[placeholder*="Enter a label"]');
+        if (input?.value) document.querySelector('#preview-label output').textContent = input.value;
+      });
+      document.querySelector('#watch-path button').addEventListener('click', (event) => {
+        const input = event.target.parentElement.querySelector('input[placeholder="Enter a path to watch (e.g., src/**, dist/*.js)"]');
+        if (input?.value) document.querySelector('#watch-path output').textContent = input.value;
+      });
+      document.querySelector('#middleware button').addEventListener('click', () => {
+        const input = document.querySelector('input[placeholder="e.g., rate-limit@file, auth@file"]');
+        const value = input.value.trim();
+        if (value) {
+          document.querySelector('#middleware output').textContent = value;
+          input.value = '';
+        }
+      });
+      const contexts = document.createElement('section');
+      contexts.innerHTML = '<div role="dialog"><div data-slot="dialog-footer"><button id="import-count"></button></div><p id="move-count" data-slot="dialog-description"></p></div><div class="flex items-center justify-between text-sm text-muted-foreground"><span id="overview-count"></span></div><div data-slot="card-footer"><span id="project-count"></span></div><ul><li id="config-key">services</li></ul><input id="mount-path" placeholder="secret">';
+      document.querySelector('main').append(contexts);
+      const setParts = (id, parts) => document.getElementById(id).append(...parts.map((part) => document.createTextNode(part)));
+      setParts('import-count', ['Import ', '1', ' secret', '']);
+      setParts('move-count', ['Select the target project and environment to move ', '1', ' services']);
+      setParts('overview-count', ['1', ' ', 'service', ' total']);
+      setParts('project-count', ['1', ' ', 'service']);
+      const updateCounts = document.createElement('button');
+      updateCounts.id = 'update-context-counts';
+      updateCounts.textContent = 'Update counts';
+      updateCounts.addEventListener('click', () => {
+        document.getElementById('import-count').childNodes[1].nodeValue = '2';
+        document.getElementById('import-count').childNodes[3].nodeValue = 's';
+        document.getElementById('move-count').childNodes[1].nodeValue = '2';
+        document.getElementById('overview-count').childNodes[0].nodeValue = '2';
+        document.getElementById('overview-count').childNodes[2].nodeValue = 'services';
+        document.getElementById('project-count').childNodes[0].nodeValue = '2';
+        document.getElementById('project-count').childNodes[2].nodeValue = 'services';
+      });
+      contexts.append(updateCounts);
       setTimeout(() => {
+        const rawLog = document.createElement('span');
+        rawLog.id = 'dynamic-raw-log';
+        rawLog.className = 'font-mono whitespace-pre-wrap break-all';
+        rawLog.innerHTML = 'Save<strong title="Save">Cancel</strong>';
+        document.querySelector('#logs').append(rawLog);
         const button = document.createElement('button');
         button.textContent = 'Deployment Logs';
         document.querySelector('#dynamic').append(button);
         const logs = document.createElement('p');
         logs.textContent = 'Logs for api-service';
         document.querySelector('#dynamic').append(logs);
+        const toast = document.createElement('p');
+        toast.id = 'template-toast';
+        toast.textContent = 'Network "production-api-server" updated from Docker';
+        document.querySelector('main').append(toast);
       }, 150);
     </script>
   </body>
