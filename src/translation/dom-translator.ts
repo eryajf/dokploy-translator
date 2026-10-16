@@ -45,12 +45,21 @@ function isLikelyUiText(value: string): boolean {
   return true;
 }
 
+function safePageUrl(): string {
+  try {
+    const url = new URL(location.href);
+    return `${url.origin}${url.pathname}`;
+  } catch {
+    return location.origin;
+  }
+}
+
 function reportUnknown(node: Node, value: string, callback?: UnknownTextCallback): void {
   if (!callback || !isVisible(node) || !isLikelyUiText(value)) return;
   const element = elementForNode(node);
   callback({
     text: value.trim(),
-    url: location.href,
+    url: safePageUrl(),
     tagName: element?.tagName.toLowerCase() ?? "text",
     seenAt: Date.now(),
   });

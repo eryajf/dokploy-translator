@@ -1,3 +1,5 @@
+import type { SiteConfig } from "./settings";
+
 export function normalizeOrigin(value: string): string {
   const input = value.trim();
   if (!input) throw new Error("请输入 Dokploy 地址");
@@ -14,4 +16,24 @@ export function originPattern(origin: string): string {
 
 export function siteId(origin: string): string {
   return `dokploy-${Array.from(origin).reduce((hash, char) => ((hash * 33) ^ char.charCodeAt(0)) >>> 0, 5381).toString(16)}`;
+}
+export function parseSiteConfig(value: unknown): SiteConfig | null {
+  if (!value || typeof value !== "object") return null;
+  const candidate = value as Partial<SiteConfig>;
+  if (typeof candidate.origin !== "string") return null;
+  let origin: string;
+  try {
+    origin = normalizeOrigin(candidate.origin);
+  } catch {
+    return null;
+  }
+  const now = Date.now();
+  return {
+    id: siteId(origin),
+    origin,
+    enabled: candidate.enabled !== false,
+    locale: "zh-CN",
+    createdAt: typeof candidate.createdAt === "number" && Number.isFinite(candidate.createdAt) ? candidate.createdAt : now,
+    updatedAt: typeof candidate.updatedAt === "number" && Number.isFinite(candidate.updatedAt) ? candidate.updatedAt : now,
+  };
 }

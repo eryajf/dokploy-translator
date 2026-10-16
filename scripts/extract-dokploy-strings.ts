@@ -21,6 +21,10 @@ const sensitivePath = join(translationDir, "dictionary.sensitive.json");
 const attributes = new Set(["placeholder", "title", "aria-label", "aria-description", "alt"]);
 const candidates = new Map<string, Candidate>();
 
+if (!existsSync(root)) {
+  throw new Error(`未找到 Dokploy 源码目录：${root}。请初始化 dokploy 子模块后再运行提取。`);
+}
+
 function files(directory: string): string[] {
   if (!existsSync(directory)) return [];
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {

@@ -1,7 +1,7 @@
 import { storage } from "wxt/utils/storage";
 import { migrateSettings } from "./migrations";
 export { migrateSettings } from "./migrations";
-export { normalizeOrigin, originPattern, siteId } from "./site";
+export { normalizeOrigin, originPattern, siteId, parseSiteConfig } from "./site";
 
 export type Locale = "zh-CN";
 

@@ -33,4 +33,12 @@ describe("DOM translator", () => {
     expect(document.querySelector("p:nth-of-type(3)")?.textContent).toBe("Save");
     expect(unknown).toContain("Future Dokploy action");
   });
+
+  it("omits query strings and fragments from unknown-text records", () => {
+    window.history.pushState({}, "", "/dashboard?token=secret#logs");
+    const unknown: { url: string }[] = [];
+    document.body.innerHTML = "<p>Untranslated dashboard notice</p>";
+    scan(document.body, { onUnknown: (entry) => unknown.push(entry) });
+    expect(unknown[0]?.url).toBe("http://localhost:3000/dashboard");
+  });
 });

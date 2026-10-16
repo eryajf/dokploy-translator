@@ -17,6 +17,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "cross-env WXT_E2E=true wxt build --mode e2e && playwright test",
+    "check:translation-coverage": "tsx scripts/check-translation-coverage.ts",
     "check:release": "node scripts/check-release.mjs"
   },
   "dependencies": {

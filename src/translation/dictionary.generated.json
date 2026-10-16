@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "source": "dokploy/apps/dokploy",
-  "generatedAt": "2026-10-15T16:54:50.240Z",
+  "generatedAt": "2026-10-16T04:57:07.680Z",
   "candidates": [
     {
       "source": "— avoid root account credentials.",
@@ -27950,7 +27950,7 @@
     {
       "source": "template and add it to your project.",
       "file": "components/dashboard/project/add-template.tsx",
-      "line": 521,
+      "line": 530,
       "kind": "jsx-text",
       "risk": "ui",
       "reviewed": false
@@ -28470,7 +28470,7 @@
     {
       "source": "This will create an application from the",
       "file": "components/dashboard/project/add-template.tsx",
-      "line": 520,
+      "line": 529,
       "kind": "jsx-text",
       "risk": "ui",
       "reviewed": false

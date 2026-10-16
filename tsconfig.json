@@ -10,5 +10,6 @@
     "skipLibCheck": true,
     "types": ["vitest/globals"]
   },
+  "exclude": ["dokploy/**", "node_modules/**"],
   "include": [".wxt/tsconfig.json", "**/*.ts", "**/*.tsx"]
 }

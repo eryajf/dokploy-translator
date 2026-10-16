@@ -6,6 +6,7 @@ import {
   settings,
   unknownTexts,
   normalizeOrigin,
+  parseSiteConfig,
   originPattern,
   siteId,
   type ExportBundle,
@@ -117,7 +118,7 @@ function App() {
     try {
       const parsed = JSON.parse(await file.text()) as Partial<ExportBundle>;
       if (parsed.schemaVersion !== 1 || !parsed.settings || !Array.isArray(parsed.settings.sites)) throw new Error("备份文件格式不受支持");
-      const sites = parsed.settings.sites.map((site) => ({ ...site, origin: normalizeOrigin(site.origin), id: siteId(normalizeOrigin(site.origin)) }));
+      const sites = [...new Map(parsed.settings.sites.map(parseSiteConfig).filter((site): site is SiteConfig => site !== null).map((site) => [site.origin, site])).values()];
       await settings.setValue({ version: 2, enabled: parsed.settings.enabled !== false, debugUnknown: parsed.settings.debugUnknown === true, sites });
       await customTranslations.setValue(parsed.customTranslations && typeof parsed.customTranslations === "object" ? parsed.customTranslations : {});
       await unknownTexts.setValue(Array.isArray(parsed.unknownTexts) ? parsed.unknownTexts.slice(0, 500) : []);
