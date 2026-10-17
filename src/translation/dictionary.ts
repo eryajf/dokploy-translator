@@ -1,15 +1,23 @@
 import { coreTranslations } from "./core-dictionary";
+import { deploymentGapTranslations } from "./deployment-gap-dictionary";
+import { dashboardGapTranslations } from "./dashboard-gap-dictionary";
 import { longTailTranslations } from "./long-tail-dictionary";
 import { pageTranslations } from "./page-dictionary";
+import { settingsGapTranslations } from "./settings-gap-dictionary";
+import { finalGapTranslations } from "./final-gap-dictionary";
+import { repairGapTranslations } from "./repair-gap-dictionary";
+import { templateTranslations } from "./template-dictionary";
+import { normalizeExactKey } from "./normalize";
 
 export type TranslationRule =
   | { kind: "exact"; source: string; target: string; areas?: string[] }
   | { kind: "pattern"; pattern: string; target: string; areas?: string[] };
 
 export const dictionaryMeta = {
-  dictionaryVersion: "2026.10.16.2",
+  dictionaryVersion: "2026.10.16.4",
   dokployVersion: "v0.30.8",
-  generatedAt: "2026-10-15",
+  dokployCommit: "05970e7b234d4742ceab2967490597fbde47dbdd",
+  generatedAt: "2026-10-16",
   reviewedAt: "2026-10-16",
 } as const;
 
@@ -62,34 +70,42 @@ export const exactDictionary = new Map([
   ...Object.entries(coreTranslations),
   ...Object.entries(pageTranslations),
   ...Object.entries(longTailTranslations),
+  ...Object.entries(deploymentGapTranslations),
+  ...Object.entries(settingsGapTranslations),
+  ...Object.entries(dashboardGapTranslations),
+  ...Object.entries(finalGapTranslations),
+  ...Object.entries(repairGapTranslations),
 ]);
 
-function normalizeKey(value: string): string {
-  return value
-    .trim()
-    .replace(/\s+/g, " ")
-    .replace(/&apos;|&#39;/g, "'")
-    .replace(/&quot;|&#34;/g, '"')
-    .replace(/&mdash;/g, "—")
-    .replace(/&nbsp;/g, " ");
-}
+const uiWordTranslations: Record<string, string> = {
+  server: "服务器", project: "项目", environment: "环境", application: "应用", service: "服务",
+  database: "数据库", network: "网络", volume: "卷", domain: "域名",
+};
 
 for (const [source, target] of [...exactDictionary.entries()]) {
-  const normalized = normalizeKey(source);
+  const normalized = normalizeExactKey(source);
   if (!exactDictionary.has(normalized)) exactDictionary.set(normalized, target);
 }
 
 export function translateText(value: string, area = "text", customTranslations: Record<string, string> = {}): string | undefined {
   const rawKey = value.trim();
-  const key = normalizeKey(rawKey);
+  const key = normalizeExactKey(rawKey);
   const custom = customTranslations[rawKey] ?? customTranslations[key];
-  if (custom) return value.replace(rawKey, custom);
+  if (custom) return value.replace(rawKey, () => custom);
   const exact = exactDictionary.get(key);
-  if (exact) return value.replace(rawKey, exact);
+  if (exact) return value.replace(rawKey, () => exact);
+  for (const rule of templateTranslations) {
+    if (rule.pattern.test(rawKey)) return value.replace(rawKey, () => rawKey.replace(rule.pattern, rule.target));
+  }
   for (const rule of dictionary) {
     if (rule.kind !== "pattern" || (rule.areas && !rule.areas.includes(area))) continue;
-    const match = key.match(new RegExp(rule.pattern));
-    if (match) return value.replace(rawKey, rule.target.replace(/\$(\d+)/g, (_, index) => match[Number(index)] ?? ""));
+    const match = rawKey.match(new RegExp(rule.pattern));
+    if (match) return value.replace(rawKey, () => rule.target.replace(/\$(\d+)/g, (_, index) => match[Number(index)] ?? ""));
+  }
+  const sentence = key.match(/^(Add a new|Please select your) (server|project|environment|application|service|database|network|volume|domain)(\.)?$/);
+  if (sentence) {
+    const prefix = sentence[1] === "Add a new" ? "添加新" : "请选择你的";
+    return value.replace(rawKey, `${prefix}${uiWordTranslations[sentence[2]]}${sentence[3] ? "。" : ""}`);
   }
   return undefined;
 }

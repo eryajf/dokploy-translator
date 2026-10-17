@@ -57,9 +57,13 @@ describe("module dictionary coverage", () => {
     });
   }
 
+  it("translates the CPU example explanation without changing the numeric value", () => {
+    expect(translateText("1000000000 (1 CPU)")).toBe("1000000000（1 个 CPU）");
+    expect(translateText("1000000000")).toBeUndefined();
+  });
+
   it("keeps operational identifiers and user data intact", () => {
     expect(translateText("my-production-server")).toBeUndefined();
     expect(translateText("https://idp.example.com/sso")).toBeUndefined();
-    expect(translateText("1000000000 (1 CPU)")).toBeUndefined();
   });
 });

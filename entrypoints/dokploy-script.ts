@@ -6,7 +6,9 @@ import { startTranslator, type UnknownTextCallback } from "../src/translation/do
 export default defineUnlistedScript(() => {
   let stop: (() => void) | undefined;
   let debugUnknown = false;
-  let custom = {} as Record<string, string>;
+  let generation = 0;
+  let restartPending = false;
+  let appliedCustom = "";
   const reportedUnknown = new Set<string>();
 
   const reportUnknown: UnknownTextCallback = (entry) => {
@@ -18,14 +20,21 @@ export default defineUnlistedScript(() => {
   };
 
   const sync = async (restart = false) => {
-    const current = await settings.getValue();
-    custom = await customTranslations.getValue();
+    const request = ++generation;
+    restartPending ||= restart;
+    debugUnknown = false;
+    const [current, custom] = await Promise.all([settings.getValue(), customTranslations.getValue()]);
+    if (request !== generation) return;
+    const customKey = JSON.stringify(custom);
+    const shouldRestart = restartPending || appliedCustom !== customKey;
+    restartPending = false;
     debugUnknown = current.debugUnknown;
     const enabled = import.meta.env.MODE === "e2e" || (current.enabled && current.sites.some(
       (site) => site.enabled && site.origin === location.origin,
     ));
-    if (enabled && (restart || !stop)) {
+    if (enabled && (shouldRestart || !stop)) {
       stop?.();
+      appliedCustom = customKey;
       stop = startTranslator({ onUnknown: reportUnknown, customTranslations: custom });
     }
     if (!enabled && stop) {

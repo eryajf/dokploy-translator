@@ -15,6 +15,7 @@ import {
   type UnknownTextEntry,
 } from "../../src/storage/settings";
 import { dictionaryMeta } from "../../src/translation/dictionary";
+import { createConfigBackup, importUnknownTexts } from "../../src/storage/backup";
 import "./style.css";
 
 type PermissionMap = Record<string, boolean>;
@@ -102,13 +103,7 @@ function App() {
   }
 
   async function exportData(): Promise<void> {
-    const bundle: ExportBundle = {
-      schemaVersion: 1,
-      exportedAt: new Date().toISOString(),
-      settings: await settings.getValue(),
-      unknownTexts: await unknownTexts.getValue(),
-      customTranslations: await customTranslations.getValue(),
-    };
+    const bundle = createConfigBackup(await settings.getValue(), await customTranslations.getValue());
     downloadJson("dokploy-translator-backup.json", bundle);
     setNotice("配置已导出");
   }
@@ -121,7 +116,9 @@ function App() {
       const sites = [...new Map(parsed.settings.sites.map(parseSiteConfig).filter((site): site is SiteConfig => site !== null).map((site) => [site.origin, site])).values()];
       await settings.setValue({ version: 2, enabled: parsed.settings.enabled !== false, debugUnknown: parsed.settings.debugUnknown === true, sites });
       await customTranslations.setValue(parsed.customTranslations && typeof parsed.customTranslations === "object" ? parsed.customTranslations : {});
-      await unknownTexts.setValue(Array.isArray(parsed.unknownTexts) ? parsed.unknownTexts.slice(0, 500) : []);
+      if (Array.isArray(parsed.unknownTexts) && parsed.unknownTexts.length > 0) {
+        await unknownTexts.setValue(importUnknownTexts([...parsed.unknownTexts, ...await unknownTexts.getValue()]));
+      }
       await browser.runtime.sendMessage({ type: "sync" });
       await refresh();
       setNotice("配置已导入");
@@ -155,7 +152,7 @@ function App() {
     <section className="card">
       <h2>调试与词典</h2>
       <label className="switch"><input type="checkbox" checked={value.debugUnknown} disabled={busy} onChange={() => void updateSettings((current) => ({ ...current, debugUnknown: !current.debugUnknown }))} /> 记录未翻译文本</label>
-      <p className="muted">当前记录 {unknown.length} 条，仅保存在本地。</p>
+      <p className="muted">当前记录 {unknown.length} 条，仅保存在本地，默认关闭。会过滤日志正文、邮箱和明显凭据，但仍可能包含页面数据；请仅在排查时开启，用后清空。导出配置不包含这些调试记录。</p>
       <div className="button-row"><button onClick={() => void exportData()}>导出配置</button><button onClick={() => importRef.current?.click()}>导入配置</button><button className="secondary" onClick={() => void clearUnknown()}>清空记录</button><input ref={importRef} hidden type="file" accept="application/json" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importData(file); event.currentTarget.value = ""; }} /></div>
       {unknown.length > 0 && <details><summary>查看最近未翻译文本</summary><ul className="unknown-list">{unknown.slice(0, 20).map((entry) => <li key={`${entry.url}-${entry.text}`}><code>{entry.text}</code><small>{entry.tagName} · {entry.url}</small></li>)}</ul></details>}
     </section>
