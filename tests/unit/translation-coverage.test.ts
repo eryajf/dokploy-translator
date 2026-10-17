@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import generated from "../../src/translation/dictionary.generated.json";
 import { dictionary, exactDictionary, translateText } from "../../src/translation/dictionary";
 import { reviewedTechnicalValues } from "../../src/translation/reviewed-technical-values";
-import { aggregateTemplates, assessCandidate, assessTemplate, auditCoverage, reviewEnglish } from "../../src/translation/coverage-review";
+import { aggregateTemplates, assessCandidate, assessTemplate, auditCoverage, reviewEnglish, reverseAuditCoverage } from "../../src/translation/coverage-review";
 import type { CoverageCandidate, CoverageOptions } from "../../src/translation/coverage-review";
 
 const candidate = (source: string, extra: Partial<CoverageCandidate> = {}): CoverageCandidate => ({
@@ -327,5 +327,42 @@ describe("coverage statistics", () => {
       expect(result.missing.some((item) => item.candidate.source === source)).toBe(true);
     }
     expect(result.passed).toBe(false);
+  });
+
+  describe("reverse extractor audit", () => {
+    const scan = (text: string, extra: Partial<{ file: string; line: number; kind: string; explicitUi: boolean }> = {}) => ({
+      file: "components/dashboard/example.tsx", line: 1, kind: "jsx-text", text, explicitUi: true, ...extra,
+    });
+
+    it("reports UI-shaped source text that never became a candidate", () => {
+      const result = reverseAuditCoverage([candidate("Home")], [scan("Home"), scan("Memory hard limit in bytes. Example: 1GB = 1073741824 bytes.")]);
+      expect(result.scanned).toBe(2);
+      expect(result.findings.map((finding) => finding.source)).toEqual(["Memory hard limit in bytes. Example: 1GB = 1073741824 bytes."]);
+      expect(result.passed).toBe(false);
+    });
+
+    it("accepts text already present as a complete template shell", () => {
+      const shell = "Schedule ${…} successfully";
+      const result = reverseAuditCoverage([candidate("successfully", { templates: [shell] })], [scan(shell)]);
+      expect(result.findings).toEqual([]);
+      expect(result.passed).toBe(true);
+    });
+
+    it("ignores console output, throw messages, values and non-UI files", () => {
+      const values = [
+        scan("Deployment logs error:", { explicitUi: false }),
+        scan("https://example.com/webhook"),
+        scan("/etc/dokploy/traefik"),
+        scan("docker compose up -d"),
+        scan("README"),
+        scan("Some English sentence", { file: "pages/api/deploy/[refreshToken].ts" }),
+        scan("Another English sentence", { file: "components/dashboard/application/schedules/timezones.ts" }),
+      ];
+      expect(reverseAuditCoverage([], values).findings).toEqual([]);
+    });
+
+    it("normalizes entities and whitespace before comparing with candidates", () => {
+      expect(reverseAuditCoverage([candidate("Containers &amp; services")], [scan("Containers   &  services")]).findings).toEqual([]);
+    });
   });
 });

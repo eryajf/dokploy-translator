@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "source": "dokploy/apps/dokploy",
-  "generatedAt": "2026-10-16T10:04:13.365Z",
+  "generatedAt": "2026-10-17T03:05:56.617Z",
   "candidates": [
     {
       "source": "--- No time found ---",
@@ -1341,23 +1341,6 @@
     {
       "source": "[REDACTED CODE]",
       "file": "components/dashboard/application/advanced/cluster/swarm-forms/placement-form.tsx",
-      "line": 211,
-      "kind": "jsx-text",
-      "risk": "code",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/application/advanced/cluster/swarm-forms/placement-form.tsx",
-          "line": 211,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "code"
-    },
-    {
-      "source": "[REDACTED CODE]",
-      "file": "components/dashboard/application/advanced/cluster/swarm-forms/placement-form.tsx",
       "line": 219,
       "kind": "attribute",
       "risk": "code",
@@ -1401,74 +1384,6 @@
           "file": "components/dashboard/application/advanced/show-resources.tsx",
           "line": 64,
           "kind": "string-literal"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "code"
-    },
-    {
-      "source": "[REDACTED CODE]",
-      "file": "components/dashboard/application/advanced/show-resources.tsx",
-      "line": 232,
-      "kind": "jsx-text",
-      "risk": "code",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/application/advanced/show-resources.tsx",
-          "line": 232,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "code"
-    },
-    {
-      "source": "[REDACTED CODE]",
-      "file": "components/dashboard/application/advanced/show-resources.tsx",
-      "line": 271,
-      "kind": "jsx-text",
-      "risk": "code",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/application/advanced/show-resources.tsx",
-          "line": 271,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "code"
-    },
-    {
-      "source": "[REDACTED CODE]",
-      "file": "components/dashboard/application/advanced/show-resources.tsx",
-      "line": 311,
-      "kind": "jsx-text",
-      "risk": "code",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/application/advanced/show-resources.tsx",
-          "line": 311,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "code"
-    },
-    {
-      "source": "[REDACTED CODE]",
-      "file": "components/dashboard/application/advanced/show-resources.tsx",
-      "line": 351,
-      "kind": "jsx-text",
-      "risk": "code",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/application/advanced/show-resources.tsx",
-          "line": 351,
-          "kind": "jsx-text"
         }
       ],
       "placeholders": [],
@@ -1571,23 +1486,6 @@
           "file": "components/dashboard/compose/general/compose-file-editor.tsx",
           "line": 145,
           "kind": "template"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "code"
-    },
-    {
-      "source": "[REDACTED CODE]",
-      "file": "components/dashboard/compose/general/randomize-compose.tsx",
-      "line": 121,
-      "kind": "jsx-text",
-      "risk": "code",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/compose/general/randomize-compose.tsx",
-          "line": 121,
-          "kind": "jsx-text"
         }
       ],
       "placeholders": [],
@@ -2582,23 +2480,6 @@
     {
       "source": "[REDACTED DYNAMIC]",
       "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-      "line": 59,
-      "kind": "string-literal",
-      "risk": "dynamic",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-          "line": 59,
-          "kind": "string-literal"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "dynamic"
-    },
-    {
-      "source": "[REDACTED DYNAMIC]",
-      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
       "line": 579,
       "kind": "jsx-text",
       "risk": "dynamic",
@@ -2675,23 +2556,6 @@
         {
           "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
           "line": 877,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "dynamic"
-    },
-    {
-      "source": "[REDACTED DYNAMIC]",
-      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-      "line": 883,
-      "kind": "jsx-text",
-      "risk": "dynamic",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-          "line": 883,
           "kind": "jsx-text"
         }
       ],
@@ -2813,23 +2677,6 @@
     {
       "source": "[REDACTED DYNAMIC]",
       "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-      "line": 1102,
-      "kind": "jsx-text",
-      "risk": "dynamic",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-          "line": 1102,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "dynamic"
-    },
-    {
-      "source": "[REDACTED DYNAMIC]",
-      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
       "line": 1104,
       "kind": "jsx-text",
       "risk": "dynamic",
@@ -2862,23 +2709,6 @@
         "${HTTP_PROTOCOL}",
         "${HOST}"
       ],
-      "exemption": "dynamic"
-    },
-    {
-      "source": "[REDACTED DYNAMIC]",
-      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-      "line": 1193,
-      "kind": "jsx-text",
-      "risk": "dynamic",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
-          "line": 1193,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
       "exemption": "dynamic"
     },
     {
@@ -3360,40 +3190,6 @@
         {
           "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
           "line": 699,
-          "kind": "jsx-text"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "secret"
-    },
-    {
-      "source": "[REDACTED SECRET]",
-      "file": "components/proprietary/sso/register-saml-dialog.tsx",
-      "line": 368,
-      "kind": "attribute",
-      "risk": "secret",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/proprietary/sso/register-saml-dialog.tsx",
-          "line": 368,
-          "kind": "attribute"
-        }
-      ],
-      "placeholders": [],
-      "exemption": "secret"
-    },
-    {
-      "source": "[REDACTED SECRET]",
-      "file": "components/proprietary/sso/scim-dialog.tsx",
-      "line": 127,
-      "kind": "jsx-text",
-      "risk": "secret",
-      "reviewed": false,
-      "occurrences": [
-        {
-          "file": "components/proprietary/sso/scim-dialog.tsx",
-          "line": 127,
           "kind": "jsx-text"
         }
       ],
@@ -4870,6 +4666,54 @@
         {
           "file": "components/dashboard/application/build/show.tsx",
           "line": 571,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "${{vault.<name>./path/to/parameter}}",
+      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+      "line": 883,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+          "line": 883,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "${{vault.<name>.folder/secret-name}}",
+      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+      "line": 1102,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+          "line": 1102,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "${{vault.<name>.SECRET_KEY}}",
+      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+      "line": 1193,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+          "line": 1193,
           "kind": "jsx-text"
         }
       ],
@@ -13786,6 +13630,22 @@
       "placeholders": []
     },
     {
+      "source": "Bearer token for",
+      "file": "components/proprietary/sso/scim-dialog.tsx",
+      "line": 127,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/proprietary/sso/scim-dialog.tsx",
+          "line": 127,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
       "source": "Behind",
       "file": "components/dashboard/application/domains/show-domains.tsx",
       "line": 661,
@@ -20970,6 +20830,22 @@
       "placeholders": []
     },
     {
+      "source": "CPU quota in units of 10^-9 CPUs. Example: 2 CPUs = 2000000000. Use +/- buttons to adjust by 0.25 CPU.",
+      "file": "components/dashboard/application/advanced/show-resources.tsx",
+      "line": 311,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/application/advanced/show-resources.tsx",
+          "line": 311,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
       "source": "CPU Reservation",
       "file": "components/dashboard/application/advanced/show-resources.tsx",
       "line": 343,
@@ -20980,6 +20856,22 @@
         {
           "file": "components/dashboard/application/advanced/show-resources.tsx",
           "line": 343,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "CPU shares (relative weight). Example: 1 CPU = 1000000000. Use +/- buttons to adjust by 0.25 CPU.",
+      "file": "components/dashboard/application/advanced/show-resources.tsx",
+      "line": 351,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/application/advanced/show-resources.tsx",
+          "line": 351,
           "kind": "jsx-text"
         }
       ],
@@ -29821,6 +29713,38 @@
         {
           "file": "components/dashboard/application/patches/create-file-dialog.tsx",
           "line": 73,
+          "kind": "attribute"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "e.g. 80",
+      "file": "components/dashboard/settings/web-server/manage-traefik-ports.tsx",
+      "line": 222,
+      "kind": "attribute",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/settings/web-server/manage-traefik-ports.tsx",
+          "line": 222,
+          "kind": "attribute"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "e.g. 8080",
+      "file": "components/dashboard/settings/web-server/manage-traefik-ports.tsx",
+      "line": 193,
+      "kind": "attribute",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/settings/web-server/manage-traefik-ports.tsx",
+          "line": 193,
           "kind": "attribute"
         }
       ],
@@ -49779,6 +49703,22 @@
       "placeholders": []
     },
     {
+      "source": "Memory hard limit in bytes. Example: 1GB = 1073741824 bytes. Use +/- buttons to adjust by 256 MB.",
+      "file": "components/dashboard/application/advanced/show-resources.tsx",
+      "line": 232,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/application/advanced/show-resources.tsx",
+          "line": 232,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
       "source": "Memory Limit",
       "file": "components/dashboard/application/advanced/show-resources.tsx",
       "line": 224,
@@ -49805,6 +49745,22 @@
         {
           "file": "components/dashboard/application/advanced/show-resources.tsx",
           "line": 263,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "Memory soft limit in bytes. Example: 256MB = 268435456 bytes. Use +/- buttons to adjust by 256 MB.",
+      "file": "components/dashboard/application/advanced/show-resources.tsx",
+      "line": 271,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/application/advanced/show-resources.tsx",
+          "line": 271,
           "kind": "jsx-text"
         }
       ],
@@ -56759,6 +56715,22 @@
       "placeholders": []
     },
     {
+      "source": "Only letters, numbers, dashes and underscores (used in ${{vault.<name>.<secret>}})",
+      "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+      "line": 59,
+      "kind": "string-literal",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/settings/vault/handle-vault-provider.tsx",
+          "line": 59,
+          "kind": "string-literal"
+        }
+      ],
+      "placeholders": []
+    },
+    {
       "source": "Only letters, numbers, hyphens, and underscores allowed",
       "file": "components/proprietary/roles/manage-custom-roles.tsx",
       "line": 600,
@@ -58372,6 +58344,22 @@
       "placeholders": []
     },
     {
+      "source": "Paste IdP signing certificate (PEM, BEGIN CERTIFICATE / END CERTIFICATE)",
+      "file": "components/proprietary/sso/register-saml-dialog.tsx",
+      "line": 368,
+      "kind": "attribute",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/proprietary/sso/register-saml-dialog.tsx",
+          "line": 368,
+          "kind": "attribute"
+        }
+      ],
+      "placeholders": []
+    },
+    {
       "source": "Paste your base64-encoded compose export here...",
       "file": "components/dashboard/project/add-import.tsx",
       "line": 319,
@@ -59006,6 +58994,22 @@
           "file": "components/dashboard/application/advanced/cluster/modify-swarm-settings.tsx",
           "line": 57,
           "kind": "string-literal"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "Placement constraints (e.g., \"node.role==manager\")",
+      "file": "components/dashboard/application/advanced/cluster/swarm-forms/placement-form.tsx",
+      "line": 211,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/application/advanced/cluster/swarm-forms/placement-form.tsx",
+          "line": 211,
+          "kind": "jsx-text"
         }
       ],
       "placeholders": []
@@ -87107,6 +87111,22 @@
         {
           "file": "components/dashboard/application/advanced/ports/handle-ports.tsx",
           "line": 259,
+          "kind": "jsx-text"
+        }
+      ],
+      "placeholders": []
+    },
+    {
+      "source": "When you activate this option, we will include a env `COMPOSE_PREFIX` variable to the compose file so you can use it in your compose file.",
+      "file": "components/dashboard/compose/general/randomize-compose.tsx",
+      "line": 121,
+      "kind": "jsx-text",
+      "risk": "ui",
+      "reviewed": false,
+      "occurrences": [
+        {
+          "file": "components/dashboard/compose/general/randomize-compose.tsx",
+          "line": 121,
           "kind": "jsx-text"
         }
       ],

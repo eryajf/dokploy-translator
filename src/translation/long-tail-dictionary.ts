@@ -461,7 +461,7 @@ export const longTailTranslations: Record<string, string> = {
   "My First Server": "我的第一台服务器",
   "One-click templates": "一键模板",
   "Popular open source stacks, one click away.": "热门开源技术栈，一键即可使用。",
-  "Postgres, MySQL, MongoDB, Redis and more, one click away.": "Postgres、MySQL、MongoDB、Redis 等数据库，一键即可使用。",
+  "Postgres, MySQL, MongoDB, Redis and more, one click away.": "PostgreSQL、MySQL、MongoDB、Redis 等数据库，一键即可使用。",
   "Push a repo, a compose file, or a container image and go live.": "推送代码仓库、Compose 文件或容器镜像即可上线。",
   "Reachable now": "现在可以访问",
   "Runs on infrastructure you control — no vendor lock-in.": "运行在你掌控的基础设施上，不受供应商锁定。",

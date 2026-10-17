@@ -590,12 +590,12 @@ export const runtimeCases: readonly TemplateRuntimeCase[] = [
   {
     "source": "Schedule ${…} successfully",
     "input": "Schedule updated successfully",
-    "output": "定时任务更新成功"
+    "output": "计划任务更新成功"
   },
   {
     "source": "Schedule ${…} successfully",
     "input": "Schedule created successfully",
-    "output": "定时任务创建成功"
+    "output": "计划任务创建成功"
   },
   {
     "source": "Selected ${selectedTags.length} tags",

@@ -5,7 +5,7 @@ export default defineConfig({
   manifest: {
     name: "Dokploy 中文化",
     description: "为 Dokploy 控制台提供本地中文界面。",
-    version: "0.1.0",
+    version: "0.2.0",
     permissions: ["storage", "scripting"],
     optional_host_permissions: ["http://*/*", "https://*/*"],
     icons: {

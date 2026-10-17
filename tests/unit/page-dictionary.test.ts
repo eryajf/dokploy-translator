@@ -63,7 +63,7 @@ const pages = {
   长尾帮助: [
     ["Enter one of the backup codes you received when setting up 2FA", "输入设置双因素认证时获得的任一备份验证码"],
     ["Describe the type of template you need, its purpose, and any specific features you'd like to include.", "描述所需模板的类型、用途以及希望包含的具体功能。"],
-    ["Add paths to watch for changes. When files in these paths change, a new deployment will be triggered.", "添加要监视变化的路径。路径中的文件变化时会触发新的部署。"],
+    ["Add paths to watch for changes. When files in these paths change, a new deployment will be triggered.", "添加要监视变化的路径。路径中的文件发生变化时会触发新的部署。"],
     ["Having rollbacks enabled increases storage usage. Be careful with this option. Note that manually cleaning the cache may delete rollback images, making them unavailable for future rollbacks.", "启用回滚会增加存储用量，请谨慎使用。手动清理缓存可能删除回滚镜像，导致后续无法回滚。"],
     ["Isolated deployment is deprecated. Use the Networks section above to attach networks per service and detach them from dokploy-network — it is declarative and does not break on restarts.", "隔离部署已弃用。请使用上方的网络部分为每个服务挂载网络，并从 dokploy-network 分离；这种方式是声明式的，重启后也不会失效。"],
     ["Hey! Looks like the build has been running for more than 10 minutes. Would you like to cancel this deployment?", "构建似乎已运行超过 10 分钟。要取消此次部署吗？"],

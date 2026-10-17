@@ -909,4 +909,7 @@ export const reviewedTechnicalValues: readonly { source: string; file: string; r
   { source: "secrets", file: "components/shared/code-editor.tsx", reason: "Docker Compose 自动补全插入的配置键 secrets，不是自然语言栏目。" },
   { source: "services", file: "components/shared/code-editor.tsx", reason: "仅此文件中的 Docker Compose 自动补全配置键 services；其他页面的服务计数仍须翻译。" },
   { source: "volumes", file: "components/shared/code-editor.tsx", reason: "Docker Compose 自动补全插入的顶层/服务配置键 volumes。" },
+  { source: "${{vault.<name>./path/to/parameter}}", file: "components/dashboard/settings/vault/handle-vault-provider.tsx", reason: "密钥引用表达式示例，语法必须原样保留，翻译会破坏用户可复制的引用格式。" },
+  { source: "${{vault.<name>.folder/secret-name}}", file: "components/dashboard/settings/vault/handle-vault-provider.tsx", reason: "密钥引用表达式示例，语法必须原样保留，翻译会破坏用户可复制的引用格式。" },
+  { source: "${{vault.<name>.SECRET_KEY}}", file: "components/dashboard/settings/vault/handle-vault-provider.tsx", reason: "密钥引用表达式示例，语法必须原样保留，翻译会破坏用户可复制的引用格式。" },
 ];

@@ -288,3 +288,86 @@ export function auditCoverage(candidates: readonly CoverageCandidate[], options:
     passed: ui.length > 0 && missing.length === 0 && missingTemplates.length === 0,
   };
 }
+
+// Coverage is measured against the extractor's own candidate list, so a string
+// the classifier silently drops never enters the denominator and the ratio can
+// read 100% while real UI copy is untranslated. This reverse audit re-scans the
+// upstream sources for UI-shaped literals the extractor did not emit and reports
+// them separately, so a shrinking denominator is visible instead of invisible.
+export type ReverseAuditFinding = {
+  source: string;
+  file: string;
+  line: number;
+  kind: string;
+  reason: string;
+};
+
+export type ReverseAuditInput = {
+  file: string;
+  line: number;
+  kind: string;
+  text: string;
+  explicitUi: boolean;
+};
+
+const UI_ATTRIBUTES = new Set(["placeholder", "title", "description", "label", "message", "aria-label", "aria-description", "alt", "docDescription", "dropMessage", "heading"]);
+const UI_PROPERTIES = new Set(["title", "description", "label", "message", "placeholder", "heading", "docDescription", "dropMessage"]);
+const NON_UI_FILE = /^(?:pages\/api\/|server\/|scripts\/|drizzle\/)|(?:^|\/)(?:__tests?__|server|scripts|drizzle)(?:\/|$)|\.(?:test|spec)\.[jt]sx?$|timezones\.ts$|bundled-icons|wait-for/i;
+
+function isValueLike(text: string): boolean {
+  if (/^(?:[a-z][a-z\d+.-]*:\/\/|www\.)/i.test(text)) return true;
+  if (/^(?:\/|~\/|\.\.?\/)/.test(text)) return true;
+  if (/^[\w.+-]+@[\w.-]+$/.test(text)) return true;
+  if (/^(?:[a-z\d-]+\.)+(?:com|org|net|io|dev|app|sh|cn|me)(?:\/.*)?$/i.test(text)) return true;
+  if (!/\s/.test(text.trim())) return true;
+  if (/^[A-Z_][A-Z\d_]*=/.test(text)) return true;
+  if (/BEGIN [A-Z ]*PRIVATE KEY|^ssh-rsa|^#[\da-f]{6}$|^\d{8,}:AA/.test(text)) return true;
+  if (/^(?:curl|docker|npm|pnpm|git|sh|bash)\s/.test(text)) return true;
+  if (/^v=spf1/.test(text)) return true;
+  return false;
+}
+
+/**
+ * Report UI-shaped strings present in the sources but absent from the candidate
+ * list. Findings are advisory: they explain a denominator that shrank, and the
+ * caller decides whether each is genuine UI copy or a reviewed technical value.
+ */
+export function auditExtractorCoverage(
+  candidates: readonly CoverageCandidate[],
+  scanned: readonly ReverseAuditInput[],
+): ReverseAuditFinding[] {
+  const known = new Set<string>();
+  for (const candidate of candidates) {
+    known.add(normalizeExactKey(candidate.source));
+    for (const shell of [...(candidate.templates ?? []), ...(candidate.template === undefined ? [] : [candidate.template])]) {
+      known.add(normalizeExactKey(shell));
+    }
+  }
+  const findings = new Map<string, ReverseAuditFinding>();
+  for (const item of scanned) {
+    if (!item.explicitUi) continue;
+    if (NON_UI_FILE.test(item.file)) continue;
+    const text = normalizeExactKey(item.text);
+    if (!text || known.has(text) || isValueLike(text)) continue;
+    if ((text.match(/[A-Za-z][A-Za-z'’-]*/g) ?? []).length < 2) continue;
+    const key = `${text}\u0000${item.file}`;
+    if (findings.has(key)) continue;
+    findings.set(key, {
+      source: text, file: item.file, line: item.line, kind: item.kind,
+      reason: "UI-shaped source text is absent from the candidate list; verify the extractor classification.",
+    });
+  }
+  return [...findings.values()];
+}
+
+export function reverseAuditCoverage(
+  candidates: readonly CoverageCandidate[],
+  scanned: readonly ReverseAuditInput[],
+) {
+  const findings = auditExtractorCoverage(candidates, scanned);
+  return {
+    scanned: scanned.length,
+    findings,
+    passed: findings.length === 0,
+  };
+}

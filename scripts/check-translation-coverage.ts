@@ -1,18 +1,23 @@
-import { readFileSync } from "node:fs";
-import { auditCoverage } from "../src/translation/coverage-review";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
+import { auditCoverage, reverseAuditCoverage } from "../src/translation/coverage-review";
 import type { CoverageCandidate } from "../src/translation/coverage-review";
+import { scanUiShapedDirectory } from "./extract-dokploy-strings";
 
 function main(args: string[]): void {
   let limit = 100;
   let showReviewed = false;
+  let reverse = true;
   for (let index = 0; index < args.length; index++) {
     const arg = args[index];
     if (arg === "--help" || arg === "-h") {
-      console.log("Usage: pnpm check:translation-coverage [--limit N | --all] [--show-reviewed]");
+      console.log("Usage: pnpm check:translation-coverage [--limit N | --all] [--show-reviewed] [--no-reverse]");
       console.log("Checks existing JSON candidates without extracting or changing dictionaries.");
+      console.log("--no-reverse skips the independent source scan that detects extractor blind spots.");
       return;
     }
     if (arg === "--show-reviewed") showReviewed = true;
+    else if (arg === "--no-reverse") reverse = false;
     else if (arg === "--all") limit = Infinity;
     else if (arg === "--limit" && /^\d+$/.test(args[index + 1] ?? "")) {
       limit = Number(args[++index]);
@@ -87,6 +92,30 @@ function main(args: string[]): void {
   }
   if (!audit.passed) {
     throw new Error(`${audit.missing.length} UI candidates and ${audit.missingTemplates.length} complete UI templates are missing translation/review.`);
+  }
+
+  // The ratio above is only as trustworthy as the candidate list it divides by.
+  // Re-scan the sources so a classifier that drops real UI copy is reported
+  // instead of silently shrinking the denominator to a passing 100%.
+  if (reverse) {
+    const root = join(process.cwd(), "dokploy", "apps", "dokploy");
+    if (!existsSync(root)) {
+      console.log("Reverse audit: skipped (Dokploy sources not found; run git submodule update --init).");
+      return;
+    }
+    const reverseAudit = reverseAuditCoverage(candidates, scanUiShapedDirectory(root));
+    console.log(`Reverse audit scanned UI-shaped literals: ${reverseAudit.scanned}`);
+    console.log(`Reverse audit unaccounted UI text: ${reverseAudit.findings.length}`);
+    if (reverseAudit.findings.length) {
+      console.error("UI-shaped source text missing from the candidate list (possible extractor blind spot):");
+      for (const finding of reverseAudit.findings.slice(0, limit)) {
+        console.error(`${JSON.stringify(finding.source)}\t${finding.file}:${finding.line}\t${finding.reason}`);
+      }
+      if (reverseAudit.findings.length > limit) {
+        console.error(`Showing ${limit}/${reverseAudit.findings.length}; use --all to list every finding.`);
+      }
+      throw new Error(`${reverseAudit.findings.length} UI-shaped strings were not emitted as candidates; coverage may be overstated.`);
+    }
   }
 }
 

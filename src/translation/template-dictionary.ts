@@ -515,12 +515,12 @@ export const templateTranslations: {
 	{
 		source: "Schedule ${…} successfully",
 		pattern: new RegExp("^Schedule updated successfully$", "u"),
-		target: "定时任务更新成功",
+		target: "计划任务更新成功",
 	},
 	{
 		source: "Schedule ${…} successfully",
 		pattern: new RegExp("^Schedule created successfully$", "u"),
-		target: "定时任务创建成功",
+		target: "计划任务创建成功",
 	},
 	{
 		source: "Selected ${selectedTags.length} tags",

@@ -9,7 +9,7 @@ export const repairGapTranslations: Record<string, string> = {
   "“The Open Source alternative to Netlify, Vercel, Heroku.”": "“Netlify、Vercel、Heroku 的开源替代方案。”",
   "1 Backup per Database": "每个数据库可保留 1 份备份",
   "1 Organization": "1 个组织",
-  "1 Scheduled Job per Application": "每个应用可配置 1 个定时任务",
+  "1 Scheduled Job per Application": "每个应用可配置 1 个计划任务",
   "1 User": "1 位用户",
   "1 Volume Backup per Application": "每个应用可保留 1 份数据卷备份",
   "2 environments": "2 个环境",
@@ -32,7 +32,7 @@ export const repairGapTranslations: Record<string, string> = {
   "Setup 1 server": "可配置 1 台服务器",
   "Setup 1 Server": "可配置 1 台服务器",
   "Setup up to 3 Servers": "最多可配置 3 台服务器",
-  "SSO / SAML (Azure, OKTA, etc)": "SSO / SAML 单点登录（Azure、OKTA 等）",
+  "SSO / SAML (Azure, OKTA, etc)": "SSO / SAML 单点登录（Azure、Okta 等）",
   "Subscription": "订阅",
   "Unlimited Applications": "不限应用数量",
   "Unlimited apps & databases": "不限应用和数据库数量",
@@ -41,7 +41,7 @@ export const repairGapTranslations: Record<string, string> = {
   "Unlimited deployments": "不限部署次数",
   "Unlimited Deployments": "不限部署次数",
   "Unlimited Environments": "不限环境数量",
-  "Unlimited Scheduled Jobs": "不限定时任务数量",
+  "Unlimited Scheduled Jobs": "不限计划任务数量",
   "Unlimited Users": "不限用户数量",
   "Unlimited users & environments": "不限用户和环境数量",
   "Unlimited Volume Backups": "不限数据卷备份数量",
@@ -69,8 +69,8 @@ export const repairGapTranslations: Record<string, string> = {
   "In this section you can edit a domain": "您可以在此处编辑域名",
   "Redeploy the compose to apply the changes.": "请重新部署 Compose 以应用更改。",
   "Whenever you make changes to domains, remember to redeploy your compose to apply the changes.": "每次修改域名后，请记得重新部署 Compose 以应用更改。",
-  "If you want to re-deploy this application use this URL in the config of your git provider or docker": "如需触发此应用的重新部署，请将此 URL 配置到您的 Git 服务商或 Docker 中",
-  "repository through a git provider that you don't have access to. You can see basic repository information below, but cannot modify the configuration.": "仓库，但您没有对应 Git 服务商的访问权限。您可以在下方查看仓库的基本信息，但无法修改配置。",
+  "If you want to re-deploy this application use this URL in the config of your git provider or docker": "如需触发此应用的重新部署，请将此 URL 配置到您的 Git 提供商或 Docker 中",
+  "repository through a git provider that you don't have access to. You can see basic repository information below, but cannot modify the configuration.": "仓库，但您没有对应 Git 提供商的访问权限。您可以在下方查看仓库的基本信息，但无法修改配置。",
 
   // Operational help is UI prose even when it mentions literal commands/users.
   "--- No time found ---": "--- 未找到时间信息 ---",
@@ -86,4 +86,16 @@ export const repairGapTranslations: Record<string, string> = {
   "Control which nodes service tasks can be scheduled on. Constraints (node.id==xyz), Preferences (spread.node.labels.zone), MaxReplicas, and Platforms specify task placement rules.": "控制服务任务可调度到哪些节点。通过 Constraints（约束，如 node.id==xyz）、Preferences（偏好，如 spread.node.labels.zone）、MaxReplicas（最大副本数）和 Platforms（平台）指定任务调度规则。",
   "Add metadata to services using labels. Labels are key-value pairs (e.g., com.example.foo=bar) for organizing and filtering services.": "使用标签为服务添加元数据。标签是用于组织和筛选服务的键值对（例如 com.example.foo=bar）。",
   "Time to wait before forcefully killing a container. Specified in nanoseconds (e.g., 10000000000 = 10 seconds). Allows containers to shutdown gracefully.": "强制终止容器前的等待时间，以纳秒为单位（例如 10000000000 = 10 秒），以便容器正常关闭。",
+
+  // Resource-limit tooltips and field hints whose inline "=" examples were
+  // previously misclassified as code. Keep every numeric example verbatim.
+  "Memory hard limit in bytes. Example: 1GB = 1073741824 bytes. Use +/- buttons to adjust by 256 MB.": "内存硬性限制，单位为字节。例如 1GB = 1073741824 字节。使用 +/- 按钮以 256 MB 为单位调整。",
+  "Memory soft limit in bytes. Example: 256MB = 268435456 bytes. Use +/- buttons to adjust by 256 MB.": "内存软性限制，单位为字节。例如 256MB = 268435456 字节。使用 +/- 按钮以 256 MB 为单位调整。",
+  "CPU quota in units of 10^-9 CPUs. Example: 2 CPUs = 2000000000. Use +/- buttons to adjust by 0.25 CPU.": "CPU 配额，单位为 10^-9 个 CPU。例如 2 个 CPU = 2000000000。使用 +/- 按钮以 0.25 个 CPU 为单位调整。",
+  "CPU shares (relative weight). Example: 1 CPU = 1000000000. Use +/- buttons to adjust by 0.25 CPU.": "CPU 权重（相对值）。例如 1 个 CPU = 1000000000。使用 +/- 按钮以 0.25 个 CPU 为单位调整。",
+  "e.g. 8080": "例如 8080",
+  "e.g. 80": "例如 80",
+  "Bearer token for": "以下范围的 Bearer 令牌",
+  "Only letters, numbers, dashes and underscores (used in ${{vault.<name>.<secret>}})": "只能使用字母、数字、短横线和下划线（用于 ${{vault.<name>.<secret>}}）",
+  "When you activate this option, we will include a env `COMPOSE_PREFIX` variable to the compose file so you can use it in your compose file.": "启用此选项后，我们会向 Compose 文件注入一个 `COMPOSE_PREFIX` 环境变量，以便你在 Compose 文件中使用。",
 };

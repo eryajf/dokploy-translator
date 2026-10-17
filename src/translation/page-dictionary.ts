@@ -372,7 +372,8 @@ export const pageTranslations: Record<string, string> = {
   "Select a database type": "选择数据库类型",
   "Select database type": "选择数据库类型",
   "Select Node type": "选择节点类型",
-  "Sqld Node": "SQLD 节点",
+  // Lowercase sqld follows libSQL's official project naming (see dashboard-gap-dictionary).
+  "Sqld Node": "sqld 节点",
   "Start the PostgreSQL database (requires a previous successful setup)": "启动 PostgreSQL 数据库（需要之前设置成功）",
   "Start the MySQL database (requires a previous successful setup)": "启动 MySQL 数据库（需要之前设置成功）",
   "Start the Mongo database (requires a previous successful setup)": "启动 MongoDB 数据库（需要之前设置成功）",
@@ -475,7 +476,7 @@ export const pageTranslations: Record<string, string> = {
   "Use this syntax to reference project-level variables in your service environments:": "使用此语法在服务环境中引用项目级变量：",
   // Application help and validation
   "Add a labels that will trigger a preview deployment for a pull request. If no labels are specified, all pull requests will trigger a preview deployment.": "添加会触发 Pull Request 预览部署的标签。不指定标签时，所有 Pull Request 都会触发预览部署。",
-  "Add paths to watch for changes. When files in these paths change, a new deployment will be triggered.": "添加要监视变化的路径。路径中的文件变化时会触发新的部署。",
+  "Add paths to watch for changes. When files in these paths change, a new deployment will be triggered.": "添加要监视变化的路径。路径中的文件发生变化时会触发新的部署。",
   "Add paths to watch for changes. When files in these paths change, a new deployment will be triggered. This will work only when manual webhook is setup.": "添加要监视变化的路径。路径中的文件变化时会触发新的部署，仅在配置手动 Webhook 后生效。",
   "Adjust the settings for preview deployments of this application, including environment variables, build options, and deployment rules.": "调整此应用的预览部署设置，包括环境变量、构建选项和部署规则。",
   "Allows you to serve a single directory via NGINX after the build phase. Useful if the final build assets should be served as a static site.": "允许在构建阶段后通过 NGINX 提供单个目录。适用于将最终构建产物作为静态站点提供。",

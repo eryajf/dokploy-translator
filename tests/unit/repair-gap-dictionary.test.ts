@@ -44,16 +44,19 @@ const excludedValues = [
 ] as const;
 
 describe("repair gap exact UI dictionary", () => {
-  it("contains 70 generated UI entries and three source-reviewed Swarm descriptions", () => {
-    expect(entries).toHaveLength(73);
-    expect(generatedEntries).toHaveLength(70);
+  it("contains 79 generated UI entries and three source-reviewed Swarm descriptions", () => {
+    expect(entries).toHaveLength(82);
+    expect(generatedEntries).toHaveLength(79);
     expect(exact.size).toBe(entries.length);
     for (const [source, target] of entries) {
       expect(normalizeExactKey(source), source).toBe(source);
       expect(target.trim(), source).toBe(target);
       expect(target, source).toMatch(/\p{Script=Han}/u);
       expect(normalizeExactKey(target), source).not.toBe(source);
-      expect(target, source).not.toMatch(/\[REDACTED|\{\{/u);
+      expect(target, source).not.toMatch(/\[REDACTED/u);
+      // A literal "${{vault...}}" reference in the source is user-facing syntax
+      // and may stay in the target; the guard is against introducing one.
+      if (!source.includes("{{")) expect(target, source).not.toMatch(/\{\{/u);
     }
   });
 
@@ -81,7 +84,7 @@ describe("repair gap exact UI dictionary", () => {
 
   it.each([
     ["1 Backup per Database", "每个数据库可保留 1 份备份"],
-    ["1 Scheduled Job per Application", "每个应用可配置 1 个定时任务"],
+    ["1 Scheduled Job per Application", "每个应用可配置 1 个计划任务"],
     ["1 Volume Backup per Application", "每个应用可保留 1 份数据卷备份"],
     ["Basic RBAC (Admin, Developer)", "基础 RBAC（管理员、开发者）"],
     ["Basic RBAC + 2FA", "基础 RBAC 和双因素认证"],

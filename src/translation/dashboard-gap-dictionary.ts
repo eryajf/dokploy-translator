@@ -381,7 +381,9 @@ export const dashboardGapTranslations: Record<string, string> = {
   "Skip anyway": "仍然跳过",
   "Something went wrong": "出了点问题",
   "Sort by...": "排序方式…",
-  "Sqld Primary URL": "Sqld 主节点 URL",
+  // sqld is libSQL's official project name and is written lowercase upstream;
+  // the Dokploy label capitalises it only because it starts a sentence.
+  "Sqld Primary URL": "sqld 主节点 URL",
   "sqldPrimaryUrl is required when sqldNode is 'replica'.": "当 sqldNode 为 'replica' 时，必须填写 sqldPrimaryUrl。",
   "sqldPrimaryUrl should not be provided when sqldNode is not 'replica'.": "当 sqldNode 不为 'replica' 时，不应填写 sqldPrimaryUrl。",
   "Starting...": "正在启动…",

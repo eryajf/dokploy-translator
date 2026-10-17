@@ -62,28 +62,73 @@ function riskOf(value: string, explicitUi: boolean, rawValue = value): Candidate
   // path or numeric limit (e.g. "Enter full path ... /app/config.json").
   if (/^(?:[a-z][a-z\d+.-]*:\/\/|www\.|~?\/|\.\.?\/|[A-Z]:\\)\S*$/i.test(value) ||
     /^(?:[a-z\d-]+\.)+(?:com|org|net|io|dev|app)(?:[/:?#]\S*)?$/i.test(value)) return "url";
-  if (/BEGIN [A-Z ]*(?:KEY|CERTIFICATE)|\bbearer\s+[\w.+/=-]+|\b(?:api[_ -]?key|access[_ -]?token|password|p[a]ssword|secret)\s*[:=]\s*\S+|\b(?:gh[pousr]_|github_pat_|sk[-_])[\w-]+|\bAKIA[A-Z\d]{16}\b|\beyJ[\w-]+\.[\w-]+\.[\w-]+|\bssh-(?:rsa|ed25519)\s+\S+|\b(?=[A-Za-z\d+/]{32,}\b)(?=[A-Za-z\d+/]*\d)[A-Za-z\d+/]+={0,2}/i.test(value)) return "secret";
+  // "Bearer token" is a UI noun phrase; a bearer credential is the opaque value
+  // that follows, never the literal word "token".
+  // A PEM marker only proves a credential when the value *is* the block. A
+  // sentence naming the markers ("Paste … PEM, BEGIN CERTIFICATE / END …") is
+  // instructional UI copy for the field that accepts the certificate. Real
+  // base64 payloads (long unbroken runs, or a template placeholder) stay secret.
+  const namesPemMarkers = explicitUi
+    && /\bBEGIN [A-Z ]*(?:KEY|CERTIFICATE)\b/.test(value)
+    && /\bEND [A-Z ]*(?:KEY|CERTIFICATE)\b/.test(value)
+    && (value.match(/[A-Za-z][A-Za-z'’-]{1,}/g) ?? []).length >= 4
+    && !/[A-Za-z\d+/]{40,}/.test(value)
+    && !/\{\{[^}]*\}\}/.test(value)
+    && !/-----\s*$/.test(value.trim());
+  if (!namesPemMarkers && /BEGIN [A-Z ]*(?:KEY|CERTIFICATE)|\bbearer\s+(?!tokens?\b)[\w.+/=-]+|\b(?:api[_ -]?key|access[_ -]?token|password|p[a]ssword|secret)\s*[:=]\s*\S+|\b(?:gh[pousr]_|github_pat_|sk[-_])[\w-]+|\bAKIA[A-Z\d]{16}\b|\beyJ[\w-]+\.[\w-]+\.[\w-]+|\bssh-(?:rsa|ed25519)\s+\S+|\b(?=[A-Za-z\d+/]{32,}\b)(?=[A-Za-z\d+/]*\d)[A-Za-z\d+/]+={0,2}/i.test(value)) return "secret";
   // Environment assignments are case-sensitive. A case-insensitive match here
   // incorrectly treats node.id==xyz and com.example.foo=bar as credentials.
   if (/\b[A-Z_][A-Z\d_]*=(?!=)[^ ]+/.test(value)) return "secret";
   // Only tiny, parenthetical non-secret examples inside explanatory sentences
   // may contain '='. Keep classifying the original text for credentials above,
   // and never relax standalone expressions, config blocks or command examples.
-  const syntaxValue = explicitUi && /(?:\b[A-Za-z]+\b[\s,.]+){4}/.test(value)
-    ? value.replace(/\((?:e\.g\.,\s*)?(?:[a-z][\w-]*(?:\.[a-z][\w-]*)+\s*={1,2}\s*[a-z][a-z\d-]{0,23}|\d+\s*=\s*\d+(?:\.\d+)?\s+(?:nanoseconds|microseconds|milliseconds|seconds|minutes|hours))\)/g,
-      (example) => /(?:token|key|secret|credential|p[a]ssword)/i.test(example) ? example : "(example)")
+  // Explanatory prose may quote short syntax examples; a bare expression,
+  // config block or command must never be relaxed. "Placement constraints
+  // (e.g., \"node.role==manager\")" is prose with a quoted example, whereas
+  // "node.id==xyz" alone — even parenthesised — is the expression itself.
+  const proseWithExample = explicitUi
+    && (value.match(/[A-Za-z][A-Za-z'’-]{1,}/g) ?? []).length >= 3
+    // Multi-word prose that carries an inline "Example:"/"e.g." marker, a
+    // quoted snippet, or a parenthetical is documentation of a value shape.
+    && (/(?:e\.g\.|for example|example:)/i.test(value) || /["“][^"”]*["”]|\([^)]*\)/.test(value))
+    // A value that is nothing but a parenthesised/quoted expression stays code.
+    && !/^[("“]?[\w.*-]+={1,2}[\w.*-]+[)"”]?$/.test(value.trim());
+  const syntaxValue = proseWithExample
+    ? value
+      // "Example: 1GB = 1073741824 bytes." / "(e.g., 10000000000 = 10 seconds)"
+      .replace(/(?:e\.g\.,?\s*|example:\s*)\d+(?:\.\d+)?\s*(?:[A-Za-z]{1,4})?\s*={1,2}\s*\d+(?:\.\d+)?(?:\s*[A-Za-z]{1,4}\b)?/gi, "(example)")
+      .replace(/\((?:e\.g\.,\s*)?(?:[a-z][\w-]*(?:\.[a-z][\w-]*)+\s*={1,2}\s*[a-z][a-z\d-]{0,23}|\d+\s*=\s*\d+(?:\.\d+)?\s+(?:nanoseconds|microseconds|milliseconds|seconds|minutes|hours))\)/g,
+        (example) => /(?:token|key|secret|credential|p[a]ssword)/i.test(example) ? example : "(example)")
+      // A quoted or parenthesised constraint example ("node.role==manager") is
+      // documentation of the accepted syntax, not an executable expression.
+      .replace(/["“][\w.*-]+={1,2}[\w.*-]+["”]/g, "example")
+      .replace(/\(\s*[\w.*-]+={1,2}[\w.*-]+\s*\)/g, "(example)")
     : value;
   if (isMultilineConfig(rawValue) ||
     // Script comments must not conceal a subsequent executable line.
     /^\s*#.*\n/m.test(rawValue) && /^\s*(?:echo|printf|export|set|exec|sudo|docker|git|npm|pnpm|curl|wget|bash|sh)\s+\S/m.test(rawValue)) return "code";
-  if (/\$\{|\{[A-Za-z_$][\w.$]*\}|%[A-Za-z]|(?:^|\s):[A-Za-z][\w-]*|^\d{5,}$/.test(value)) return "dynamic";
-  if (/[{}<>`=]|\b[A-Z][A-Z_]+_[A-Z_]+\b/.test(syntaxValue) ||
+  // Placeholders that only demonstrate an expected value shape ("e.g. 8080",
+  // "e.g. 80") are UI copy for the field, not a user-supplied operational value.
+  const exampleOnly = /^\(?\s*(?:e\.g\.|for example|ex\.)\s*[\w./:@-]+\s*\)?[.!]?$/i.test(value);
+  // An English sentence that merely *quotes* a shell/variable form or a
+  // backticked identifier (e.g. "…(used in ${{vault.<name>.<secret>}})" or
+  // "include a env `COMPOSE_PREFIX` variable") is explanatory prose, not a
+  // dynamic value or an executable snippet.
+  const quotedIdentifier = (value.match(/`[^`]+`/g) ?? []).every((token) => /^`[\w.<>/$-]+`$/.test(token));
+  const proseQuoting = explicitUi && (value.match(/[A-Za-z][A-Za-z'’-]{1,}/g) ?? []).length >= 4 &&
+    ((/\$\{\{[\w.<>/-]+\}\}/.test(value) && /^\$\{\{[\w.<>/-]+\}\}$/.test((value.match(/\$\{\{[^}]*\}\}/) ?? [""])[0]))
+      || (quotedIdentifier && /`[^`]+`/.test(value)));
+  if (!exampleOnly && !proseQuoting && (/\$\{|\{[A-Za-z_$][\w.$]*\}|%[A-Za-z]|(?:^|\s):[A-Za-z][\w-]*|^\d{5,}$/.test(value))) return "dynamic";
+  // A sentence that merely quotes a shell variable form (e.g. a validation
+  // message naming "${{vault.<name>.<secret>}}") is prose, not a dynamic value.
+  const proseShellReference = proseQuoting;
+  if (!proseShellReference && !exampleOnly && (/[{}<>`=]|\b[A-Z][A-Z_]+_[A-Z_]+\b/.test(syntaxValue) ||
     // Executable values start with the command (or a shell prompt). Mentions
     // such as "requires sudo access" and quoted "docker build" are UI prose.
     /^(?:[$#]\s*)?(?:git|npm|pnpm|yarn|bun|npx|curl|wget|ssh|kubectl|sudo|bash|sh)\s+(?:[a-z][\w-]*|--?[\w-]+)/.test(value) ||
     /^(?:[$#]\s*)?docker\s+(?:build|run|compose|config|exec|pull|push|login|swarm|service|network|volume|ps|info|stats|events|--?[\w-]+)\b/.test(value) ||
     /[;|&]\s*(?:sudo|docker|git|npm|pnpm|curl|wget|bash|sh)\s+/.test(value) ||
-    /:\s*(?:sudo|docker|git|npm|pnpm|curl|wget|bash|sh)\s+\S/.test(value)) return "code";
+    /:\s*(?:sudo|docker|git|npm|pnpm|curl|wget|bash|sh)\s+\S/.test(value))) return "code";
   if (/^[a-z][a-z\d]*[A-Z][\w]*$|^[a-z][\w]*[-_.][\w.-]+$/.test(value)) return "dynamic";
   // Labels such as Docker File, Generate API Key and Host Path are UI copy,
   // not evidence of an executable command, credential or user-supplied path.
@@ -249,7 +294,11 @@ export function collectCandidates(text: string, file: string): Candidate[] {
   const candidates = new Map<string, Candidate>();
   const add = (value: string, node: ts.Node, kind: CandidateKind, explicitUi: boolean, placeholders: string[] = [], templateRisk?: CandidateRisk, template?: string, templateNode: ts.Node = node) => {
     const source = normalizeExactKey(value);
-    if (source.length < 2 || !/[A-Za-z]{2}/.test(source) || source.length > 500) return;
+    // Field hints such as "e.g. 8080" carry only one letter pair but are still
+    // reviewed UI copy; require either two adjacent letters or a short
+    // "e.g./for example" hint so pure numbers and symbols stay excluded.
+    const letterHint = /^(?:e\.g\.|for example|ex\.)\s*\S+$/i.test(source);
+    if (source.length < 2 || (!/[A-Za-z]{2}/.test(source) && !letterHint) || source.length > 500) return;
     const risk = templateRisk ?? riskOf(source, explicitUi, value);
     const line = sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
     const occurrence = { file, line, kind };
@@ -424,6 +473,70 @@ function main(): void {
   writeFileSync(join(translationDir, "dictionary.report.json"), `${JSON.stringify({ schemaVersion: 1, source: relative(process.cwd(), root), generatedAt: new Date().toISOString(), total: all.length, counts }, null, 2)}\n`);
   writeFileSync(join(translationDir, "dictionary.sensitive.json"), `${JSON.stringify(all.filter((item) => item.risk !== "ui"), null, 2)}\n`);
   console.log(`Extracted ${all.length} candidates: ${JSON.stringify(counts)}`);
+}
+
+/**
+ * Enumerate UI-shaped literals straight from the sources, independently of
+ * riskOf(). The reverse audit compares this list with the emitted candidates so
+ * a classifier that drops real UI copy cannot hide behind a 100% ratio.
+ */
+export function scanUiShapedLiterals(text: string, file: string): { file: string; line: number; kind: string; text: string; explicitUi: boolean }[] {
+  if (isNonUiFile(file)) return [];
+  const sourceFile = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, /\.[jt]sx$/.test(file) ? ts.ScriptKind.TSX : ts.ScriptKind.TS);
+  const found: { file: string; line: number; kind: string; text: string; explicitUi: boolean }[] = [];
+  const lineOf = (node: ts.Node) => sourceFile.getLineAndCharacterOfPosition(node.getStart(sourceFile)).line + 1;
+  const inConsoleOrThrow = (node: ts.Node): boolean => {
+    for (let current: ts.Node | undefined = node; current?.parent; current = current.parent) {
+      const parent = current.parent;
+      if (ts.isThrowStatement(parent)) return true;
+      if (ts.isCallExpression(parent) && ts.isPropertyAccessExpression(parent.expression)
+        && ts.isIdentifier(parent.expression.expression) && parent.expression.expression.text === "console") return true;
+    }
+    return false;
+  };
+  const push = (value: string, node: ts.Node, kind: string) => {
+    const text = value.replace(/\s+/g, " ").trim();
+    if (!text) return;
+    found.push({ file, line: lineOf(node), kind, text, explicitUi: !inConsoleOrThrow(node) });
+  };
+  const shellOf = (node: ts.TemplateExpression): string => {
+    let output = node.head.text;
+    for (const span of node.templateSpans) {
+      const name = span.expression.getText(sourceFile);
+      output += /^[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*$/.test(name) ? `\${${name}}` : "${…}";
+      output += span.literal.text;
+    }
+    return output;
+  };
+  const visit = (node: ts.Node) => {
+    if (ts.isJsxText(node)) push(node.getText(sourceFile), node, "jsx-text");
+    if (ts.isJsxAttribute(node) && node.initializer && node.name.getText(sourceFile) && attributes.has(node.name.getText(sourceFile))) {
+      const init = node.initializer;
+      if (ts.isStringLiteral(init)) push(init.text, init, "attribute");
+      else if (ts.isJsxExpression(init) && init.expression) {
+        if (ts.isStringLiteral(init.expression)) push(init.expression.text, init.expression, "attribute");
+        if (ts.isTemplateExpression(init.expression)) push(shellOf(init.expression), init.expression, "attribute-template");
+      }
+    }
+    if (ts.isPropertyAssignment(node) && uiProperties.has(node.name.getText(sourceFile).replace(/^["']|["']$/g, ""))) {
+      const init = node.initializer;
+      if (ts.isStringLiteral(init)) push(init.text, init, "string-literal");
+      if (ts.isTemplateExpression(init)) push(shellOf(init), init, "string-literal-template");
+    }
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression)
+      && toastMethods.has(node.expression.name.text) && node.arguments[0]) {
+      const first = node.arguments[0];
+      if (ts.isStringLiteral(first)) push(first.text, first, "toast");
+      if (ts.isTemplateExpression(first)) push(shellOf(first), first, "toast-template");
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(sourceFile);
+  return found;
+}
+
+export function scanUiShapedDirectory(root: string): { file: string; line: number; kind: string; text: string; explicitUi: boolean }[] {
+  return files(root).flatMap((file) => scanUiShapedLiterals(readFileSync(file, "utf8"), relative(root, file)));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) main();
